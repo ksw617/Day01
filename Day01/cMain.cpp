@@ -1,30 +1,122 @@
 #include <stdio.h>
 #include <Windows.h>  
 
-#define Black		0
-#define DarkBlue	1
-#define DarkGreen	2
-#define DarkCyan	3
-#define DarkRed		4
-#define DarkMagenta	5
-#define DarkYellow	6
-#define Gray		7
-#define DarkGray	8
-#define Blue		9
-#define Green		10
-#define Cyan		11
-#define Red			12
-#define Magenta		13
-#define Yellow		14
-#define White		15
 
-
+#pragma region Enum
+enum Color
+{
+	Black,
+	DarkBlue,
+	DarkGreen,
+	DarkCyan,
+	DarkRed,
+	DarkMagenta,
+	DarkYellow,
+	Gray,
+	DarkGray,
+	Blue,
+	Green,
+	Cyan,
+	Red,
+	Magenta,
+	Yellow,
+	White,
+};
+#pragma endregion
+#pragma region Struct
 struct Obj
 {
 	int x;
 	int y;
+	Color color;
 	const char* shape;
 };
+#pragma endregion
+#pragma region WINAPI
+void SetPosition(int x, int y);
+void HideCursor();
+void ChangeColor(Color color);
+#pragma endregion
+
+
+#pragma region GAME
+Obj* player = nullptr; //24byte -> 8byte
+
+void Init();
+void Update();
+void Release();
+
+#pragma endregion
+
+int main()
+{
+
+	HideCursor();
+	Init();
+
+	while (true)
+	{
+		system("cls");
+
+		Update();
+
+
+		Sleep(20);
+
+	}
+
+	Release();
+	return 0;
+}
+
+#pragma region GAME
+void Init()
+{
+	player = (Obj*)malloc(sizeof(Obj));
+	player->x = 10;
+	player->y = 10;
+	player->color = Yellow;
+	player->shape = "¿Ê";
+
+}
+void Update()
+{
+	if (GetAsyncKeyState(VK_LEFT))
+	{
+		player->x--;
+	}
+
+	if (GetAsyncKeyState(VK_RIGHT))
+	{
+		player->x++;
+	}
+
+	if (GetAsyncKeyState(VK_UP))
+	{
+		player->y--;
+	}
+
+	if (GetAsyncKeyState(VK_DOWN))
+	{
+		player->y++;
+	}
+
+	SetPosition(player->x, player->y);
+	ChangeColor(player->color);
+	printf(player->shape);
+}
+void Release()
+{
+	if (player != nullptr)
+	{
+		free(player);
+		player = nullptr;
+	}
+}
+#pragma endregion
+
+
+#pragma region WINAPI
 
 void SetPosition(int x, int y)
 {
@@ -42,52 +134,12 @@ void HideCursor()
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
 
-void ChangeColor(int color)
+void ChangeColor(Color color)
 {
 
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 
-int main()
-{
-	Obj player;
-	player.x = 10;
-	player.y = 10;
-	player.shape = "¿Ê";
-
-	HideCursor();
-
-	while (true)
-	{
-		system("cls");
-
-		if (GetAsyncKeyState(VK_LEFT))
-		{
-			player.x--;
-		}
-
-		if (GetAsyncKeyState(VK_RIGHT))
-		{
-			player.x++;
-		}
-
-		if (GetAsyncKeyState(VK_UP))
-		{
-			player.y--;
-		}
-
-		if (GetAsyncKeyState(VK_DOWN))
-		{
-			player.y++;
-		}
-
-		SetPosition(player.x, player.y);
-		ChangeColor(Yellow);
-		printf(player.shape);
+#pragma endregion
 
 
-		Sleep(20);
-
-	}
-	return 0;
-}
